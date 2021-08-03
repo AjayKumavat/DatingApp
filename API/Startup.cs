@@ -31,20 +31,26 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Ordering here is not important
+            //Connection String
             // Ordering is not important here
             //Injecting this so other classes can use the datacontext
             services.AddDbContext<DataContext>(options =>
             {
                 options.UseSqlServer(_config.GetConnectionString("con"));
             });
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
             });
+
+            services.AddCors(); //If we don't type this we'll get CORS error
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // Ordering of statement is important
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -57,6 +63,9 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            //CORS policy
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
 
             app.UseAuthorization();
 
