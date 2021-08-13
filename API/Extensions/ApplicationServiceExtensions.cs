@@ -1,4 +1,5 @@
 using API.Data;
+using API.Helpers;
 using API.Interfaces;
 using API.Services;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +13,12 @@ namespace API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
-            //AddScoped : It will scope the service till the life time of the request
+            //AddScoped : It will scope the service till the life time of the HTTP request
             services.AddScoped<ITokenService, TokenService>();
+            //User Repository
+            services.AddScoped<IUserRepository, UserRepository>();
+            //Mapping AppUser and MemberDto using AutoMapper
+            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             //Ordering here is not important
             //Connection String
             // Ordering is not important here
